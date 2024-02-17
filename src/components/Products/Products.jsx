@@ -2,21 +2,22 @@ import React, { useEffect } from "react";
 import Product from "./Product";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchData } from "../../reducers/action";
-import { priceAfterDiscount } from "../../helper/helper";
+//import { priceAfterDiscount } from "../../helper/helper";
 import { filteredProductsSelector, filtersSelector, productsSelector } from "../../reducers/selectors";
+import InfiniteScroll from "react-infinite-scroll-component";
+var limit = 8
+var totalRows = 0 
 
-
-
-function Products(){
+function Products() {
     const dispatch = useDispatch()
-    //const filters = useSelector((state) => state.filters)
-    // const products = useSelector(productsSelector)
-    // const {searchText, brand, category, status, price} = useSelector(filtersSelector)
+    // const products = useSelector(productsSeletor)
+    // const { searchText, brand, category, status, price } = useSelector(filtersSelector)
     useEffect(() => {
-        async function getProductList(){
-            let ProductListRes = await fetch('https://dummyjson.com/products?%limit=100')
-            let data = await ProductListRes.json()
-           dispatch(fetchData(data?.products))
+        async function getProductList() {
+            let productListRes = await fetch('https://dummyjson.com/products?limit=8')
+            let data = await productListRes.json()
+            totalRows = data?.total
+            dispatch(fetchData(data?.products))
         }
         getProductList()
     }, [])
@@ -60,16 +61,36 @@ function Products(){
     //     return filteredProducts
     // }
     // const filteredProducts = queryProducts();
+    const loadMoreData = async () => {
+        if (limit < totalRows) {
+            limit = limit + 8
+            let productListRes = await fetch(`https://dummyjson.com/products?limit=${limit}`)
+            let data = await productListRes.json()
+            dispatch(fetchData(data?.products))
+        }
+
+    }
     return (
         <div className="py-2 d-flex flex-column justify-content-center">
             <h5>Products</h5>
-            <div className="row">
-                {
-                    filteredProducts.map((product) => (
-                        <Product key={product.id} product={product}/>
-                    ))
-                }
-            </div>
+            <InfiniteScroll
+                dataLength={filteredProducts.length}
+                next={loadMoreData}
+                hasMore={limit < totalRows}
+                //hasMore={true}
+                loader={<p>Loading...</p>}
+                endMessage = {<p>You have seen it all!</p>}
+                style={{overflow: 'hidden'}}
+                pullDownToRefreshThreshold={'100px'}
+            >
+                <div className="row">
+                    {
+                        filteredProducts?.map((product) => (
+                            <Product key={product.id} product={product} />
+                        ))
+                    }
+                </div>
+            </InfiniteScroll>
         </div>
     )
 }
