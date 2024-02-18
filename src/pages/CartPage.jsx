@@ -1,5 +1,7 @@
 import React from "react";
 import MainLayout from "../layouts/MainLayout";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 function CartPage() {
     return (
@@ -158,6 +160,11 @@ function CartPage() {
                                 </tr>
                             </tbody>
                         </table>
+                        <div className="row col-md-12">
+                            <Link to={'/product'}>
+                                <FaArrowLeft/> Continue shopping
+                            </Link>
+                        </div>
                     </div>
                     <div className="col-md-4" style={{ minWidth: '300px' }}>
                         <div className="order-summary p-3">

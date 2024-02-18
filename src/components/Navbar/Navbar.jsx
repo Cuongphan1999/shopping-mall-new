@@ -1,9 +1,13 @@
 import React from "react";
 import { FaCartPlus, FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa'
 import { SiKasasmart } from "react-icons/si";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import filterSlice from "../../redux-toolkit/filterSlice";
+import filtersSlice from "../../redux-toolkit/filterSlice";
 
 function Navbar() {
+    const dispatch = useDispatch()
     return (
         <div className="container py-4 border-bottom">
             <div className="row">
@@ -20,15 +24,16 @@ function Navbar() {
                             placeholder="Enter product name"
                             className="form-control"
                             style={{ paddingRight: '25px' }}
+                            onInput={(e) => dispatch(filtersSlice.actions.setSearchText(e.target.value))}
                         />
                         <FaSearch size={15} style={{ marginLeft: '-25px', color: 'rgba(0,0,0,.2)' }} />
                     </form>
-                    {/* <div className="">
+                    <div className="">
                     <Link to={'/cart'}>
                         <FaShoppingCart size={20} className="me-2" role="button" />
                     </Link>
                     <FaUser size={20} role="button" />
-                </div> */}
+                </div>
                 </div>
             </div>
         </div>
